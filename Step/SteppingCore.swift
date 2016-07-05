@@ -29,7 +29,7 @@ enum SteppingCoreError: ErrorProtocol {
 /// Then, you cannot complete a stepping that is `disposed`.
 final class SteppingCore<T> {
     typealias Continuation = ((T) -> ())
-    private var state = SteppingState<T>.unscheduledAndUnresolved
+    private(set) var state = SteppingState<T>.unscheduledAndUnresolved
     private let lock = Lock()
 
     init(state: SteppingState<T>) {
@@ -53,22 +53,34 @@ final class SteppingCore<T> {
     }
     /// Calling this method itself may fail, but continuation process itself must always succeeds.
     /// There's no concept of error or cancellation in continuation.
-    func scheduleStepping<U>(into queue: SteppingExecutor, process: (T) -> U) throws -> SteppingCore<U> {
+    func scheduleStepping<U>(into queue: SteppingExecutor, process: (T) -> SteppingCore<U>) throws -> SteppingCore<U> {
         func makeFuturePair() -> (continuation: SteppingContinuation<T>, stepping: SteppingCore<U>) {
-            let n = SteppingCore<U>(state: .unscheduledAndUnresolved)
+            let n2 = SteppingCore<U>(state: .unscheduledAndUnresolved)
             // Take care that this continuation holds both of prior and next
             // stepping objects. A stepping must be disposed to kill them.
-            let c = { [n] (r: T) -> () in
-                switch queue {
-                case .immediate:
-                    n.complete(result: process(r))
-                case .specific(let q):
-                    q.async { [n] in 
-                        n.complete(result: process(r))
+            let c = { [n2] (r: T) -> () in
+                queue.execute {
+                    let n1 = process(r)
+                    n1.lock.lock()
+                    // You can continue from only unscheduled stepping.
+                    switch n1.state {
+                    case .unscheduledAndUnresolved:
+                        let c2 = { n2.complete(result: $0) }
+                        n1.state = .unresolvedButScheduled(c2)
+                        n1.lock.unlock()
+                    case .unscheduledButResolved(let r):
+                        n1.state = .disposed
+                        n1.lock.unlock()
+                        n2.complete(result: r)
+                    case .unresolvedButScheduled(_):
+                        fatalError("You cannot continue from a scheduled stepping.")
+                    case .disposed:
+                        fatalError("You cannot continue from a disposed stepping.")
                     }
+//                    n2.complete(result: process(r))
                 }
             }
-            return (c, n)
+            return (c, n2)
         }
 
         lock.lock()

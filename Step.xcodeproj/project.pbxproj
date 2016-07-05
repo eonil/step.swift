@@ -19,6 +19,7 @@
 		4562B3BB1D299101005C542A /* Stepping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4562B3BA1D299101005C542A /* Stepping.swift */; };
 		4562B3BD1D29936D005C542A /* SteppingExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4562B3BC1D29936D005C542A /* SteppingExecutor.swift */; };
 		4562B3C51D2AC364005C542A /* SteppingErrorRepoting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4562B3C41D2AC364005C542A /* SteppingErrorRepoting.swift */; };
+		4562B3E11D2B419F005C542A /* SteppingExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4562B3E01D2B419F005C542A /* SteppingExtensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		4562B3BC1D29936D005C542A /* SteppingExecutor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteppingExecutor.swift; sourceTree = "<group>"; };
 		4562B3C41D2AC364005C542A /* SteppingErrorRepoting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteppingErrorRepoting.swift; sourceTree = "<group>"; };
 		4562B3C61D2ACACF005C542A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		4562B3E01D2B419F005C542A /* SteppingExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SteppingExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +115,7 @@
 				4562B3821D296885005C542A /* Info.plist */,
 				4562B3881D29688D005C542A /* TolerantStepping.swift */,
 				4562B3961D298B2E005C542A /* TolerantSteppingCore.swift */,
+				4562B3E01D2B419F005C542A /* SteppingExtensions.swift */,
 				4562B3BA1D299101005C542A /* Stepping.swift */,
 				4562B3B81D298FBD005C542A /* SteppingCore.swift */,
 				4562B3BC1D29936D005C542A /* SteppingExecutor.swift */,
@@ -299,6 +302,7 @@
 				4562B3B91D298FBD005C542A /* SteppingCore.swift in Sources */,
 				4562B3971D298B2E005C542A /* TolerantSteppingCore.swift in Sources */,
 				4562B3C51D2AC364005C542A /* SteppingErrorRepoting.swift in Sources */,
+				4562B3E11D2B419F005C542A /* SteppingExtensions.swift in Sources */,
 				4562B3891D29688D005C542A /* TolerantStepping.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

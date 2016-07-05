@@ -15,18 +15,27 @@ final class TolerantSteppingCore<T> {
     init(state: SteppingState<TolerantSteppingResult<T>>) {
         self.core = SteppingCore<TolerantSteppingResult<T>>(state: state)
     }
+    deinit {
+//        switch core.state {
+//        case .disposed:
+//            // Fine.
+//            break
+//        default:
+//            SteppingErrorRepoting.fatalError(SteppingFatalError.cannotDeinitUndisposedTolerantStepping(self))
+//        }
+    }
     func complete(result: TolerantSteppingResult<T>) {
         core.complete(result: result)
     }
     /// Continuation can recover from prior error.
     @warn_unused_result
-    func scheduleContinuation<U>(into executor: SteppingExecutor, process: (TolerantSteppingResult<T>) throws -> TolerantSteppingResult<U>) throws -> TolerantSteppingCore<U> {
-        let n = try core.scheduleStepping(into: executor) { (r: TolerantSteppingResult<T>) -> TolerantSteppingResult<U> in
+    func scheduleContinuation<U>(into executor: SteppingExecutor, process: (TolerantSteppingResult<T>) throws -> TolerantSteppingCore<U>) throws -> TolerantSteppingCore<U> {
+        let n = try core.scheduleStepping(into: executor) { (r: TolerantSteppingResult<T>) -> SteppingCore<TolerantSteppingResult<U>> in
             do {
-                return try process(r)
+                return (try process(r)).core
             }
             catch let e {
-                return .error(e)
+                return SteppingCore<TolerantSteppingResult<U>>(state: .unscheduledButResolved(.error(e)))
             }
         }
         return TolerantSteppingCore<U>(core: n)

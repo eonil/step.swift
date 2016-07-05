@@ -16,13 +16,19 @@ public struct Stepping<T> {
         self.core = SteppingCore(state: .unscheduledButResolved(result))
     }
     public func step<U>(process: (T) -> U) throws -> Stepping<U> {
+        return try step{Stepping<U>(process($0))}
+    }
+    public func step<U>(on executor: SteppingExecutor, process: (T) -> U) throws -> Stepping<U> {
+        return try step(on: executor) {Stepping<U>(process($0))}
+    }
+    public func step<U>(process: (T) -> Stepping<U>) throws -> Stepping<U> {
         return try step(on: .immediate, process: process)
     }
     /// Continues on success.
     /// Skips to next on any error.
-    public func step<U>(on executor: SteppingExecutor, process: (T) -> U) throws -> Stepping<U> {
-        let c = try core.scheduleStepping(into: executor) { (result: T) -> U in
-            return process(result)
+    public func step<U>(on executor: SteppingExecutor, process: (T) -> Stepping<U>) throws -> Stepping<U> {
+        let c = try core.scheduleStepping(into: executor) { (result: T) -> SteppingCore<U> in
+            return process(result).core
         }
         return Stepping<U>(core: c)
     }

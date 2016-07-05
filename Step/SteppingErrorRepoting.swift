@@ -11,6 +11,7 @@ public enum SteppingFatalError: ErrorProtocol {
     case cannotResolveOnceCompletedSteppingAgain(AnyObject)
     case cannotScheduleAlreadyScheduledStepping(AnyObject)
     case cannotScheduleAlreadyDisposedStepping(AnyObject)
+    case cannotDeinitUndisposedTolerantStepping(AnyObject)
 }
 extension SteppingFatalError: CustomStringConvertible {
     public var description: String {
@@ -19,6 +20,7 @@ extension SteppingFatalError: CustomStringConvertible {
         case .cannotResolveOnceCompletedSteppingAgain(let o):   return "You cannot resolve a completed stepping `\(o)` again."
         case .cannotScheduleAlreadyScheduledStepping(let o):    return "You cannot schedule a continuation to an already scheduled stepping `\(o)`."
         case .cannotScheduleAlreadyDisposedStepping(let o):     return "You cannot schedule a continuation to an already disposed stepping `\(o)`."
+        case .cannotDeinitUndisposedTolerantStepping(let o):    return "You MUST properly terminate a tolerant-stepping `\(o)` by continuing to a non-tolerant stepping. Which means you must cleanse any possible errors."
         }
     }
 }

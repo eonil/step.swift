@@ -13,3 +13,13 @@ public enum SteppingExecutor {
     case immediate
     case specific(DispatchQueue)
 }
+extension SteppingExecutor {
+    func execute(_ f: () -> ()) {
+        switch self {
+        case .immediate:
+            f()
+        case .specific(let q):
+            q.async(execute: f)
+        }
+    }
+}

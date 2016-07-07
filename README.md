@@ -1,3 +1,6 @@
+**CAUTION: This library has been abandoned and has been replaced by a new implementation [`Flow`](https://github.com/eonil/flow.swift).
+
+
 Step
 ====
 Hoon H.

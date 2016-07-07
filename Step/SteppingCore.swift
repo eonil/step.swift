@@ -35,6 +35,22 @@ final class SteppingCore<T> {
     init(state: SteppingState<T>) {
         self.state = state
     }
+    deinit {
+        switch state {
+        case .unscheduledAndUnresolved:
+            // Bad. Must be resolved.
+            fatalError()
+        case .unscheduledButResolved(_):
+            // Fine. Terminal continuation.
+            break
+        case .unresolvedButScheduled(_):
+            // Bad. Must be resolved.
+            fatalError()
+        case .disposed:
+            // Fine.
+            break
+        }
+    }
     func complete(result: T) {
         lock.lock()
         switch state {

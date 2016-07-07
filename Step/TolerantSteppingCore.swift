@@ -16,13 +16,22 @@ final class TolerantSteppingCore<T> {
         self.core = SteppingCore<TolerantSteppingResult<T>>(state: state)
     }
     deinit {
-//        switch core.state {
-//        case .disposed:
-//            // Fine.
-//            break
-//        default:
-//            SteppingErrorRepoting.fatalError(SteppingFatalError.cannotDeinitUndisposedTolerantStepping(self))
-//        }
+        switch core.state {
+        case .unscheduledButResolved(let result):
+            switch result {
+            case .error(let e):
+                // Bad. Must be recovered.
+                fatalError()
+            case .done(_):
+                // Fine.
+                break
+            }
+        case .disposed:
+            // Fine.
+            break
+        default:
+            SteppingErrorRepoting.fatalError(SteppingFatalError.cannotDeinitUndisposedTolerantStepping(self))
+        }
     }
     func complete(result: TolerantSteppingResult<T>) {
         core.complete(result: result)
